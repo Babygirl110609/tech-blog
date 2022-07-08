@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { request } = require('express');
 const {
     User,
     Post,
@@ -34,11 +35,7 @@ router.get('/:id', (req, res) => {
                 },
                 {
                     model: Comment,
-                    attributes: ['id', 'comment_text', 'created_at'],
-                    include: {
-                        model: Post,
-                        attributes: ['title']
-                    }
+           
                 }
             ]
         })
@@ -79,29 +76,21 @@ router.post('/', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
+    console.log (req.body)
     User.findOne({
             where: {
-                username: req.body.username
+                email: req.body.email
             }
         })
         .then(dbUserData => {
             if (!dbUserData) {
                 res.status(400).json({
-                    message: 'No user with that username!'
+                    message: 'No user with that email!'
                 });
                 return;
             }
-
-            req.session.save(() => {
-                req.session.user_id = dbUserData.id;
-                req.session.username = dbUserData.username;
-                req.session.loggedIn = true;
-
-                res.json({
-                    user: dbUserData,
-                    message: 'You are now logged in!'
-                });
-            });
+            console.log(dbUserData)
+           
 
             const validPassword = dbUserData.checkPassword(req.body.password);
 
@@ -114,7 +103,7 @@ router.post('/login', (req, res) => {
 
             req.session.save(() => {
                 req.session.user_id = dbUserData.id;
-                req.session.username = dbUserData.username;
+                req.session.email = dbUserData.email;
                 req.session.loggedIn = true;
 
                 res.json({
