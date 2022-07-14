@@ -1,7 +1,7 @@
-async function createPostHandler(event) {
+ function createPostHandler(event) {
     event.preventDefault();
 
-    document.location.replace('/dashboard/new')
+    window.location.replace('/dashboard/new')
 }
 
 
